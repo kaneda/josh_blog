@@ -1,0 +1,14 @@
+<html>
+<head>
+<title>{{ original_name }}</title>
+</head>
+<body>
+  {% if img_map %}
+      {% for img,thumb in img_map.items %}
+          <a href="/static/images/galleries/{{ gallery_name }}/{{ img }}" target=_blank><img src="/static/images/galleries/{{ gallery_name }}/{{ thumb }}" /></a>
+      {% endfor %}
+  {% else %}
+      This gallery contained no images
+  {% endif %}
+</body>
+</html>
