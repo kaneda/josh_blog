@@ -4,9 +4,9 @@
 </head>
 <body>
   {% if img_map %}
-      {% for img,thumb in img_map.items %}
-          <a href="/static/images/galleries/{{ gallery_name }}/{{ img }}" target=_blank><img src="/static/images/galleries/{{ gallery_name }}/{{ thumb }}" /></a>
-      {% endfor %}
+    {% for img in img_map|dictsort:"img" %}
+      <a href="/static/images/galleries/{{ gallery_name }}/{{ img.img }}" target=_blank><img src="/static/images/galleries/{{ gallery_name }}/{{ img.thumb }}" /></a>
+    {% endfor %}
   {% else %}
       This gallery contained no images
   {% endif %}

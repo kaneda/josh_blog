@@ -3,12 +3,13 @@ from django.shortcuts import render_to_response
 from django.shortcuts import render
 from django.template import RequestContext
 from django.conf import settings
+import logging
 import os
 import Image
 
 class GalleryView(TemplateView):
     def get(self,request,gallery_name):
-        response_dict = {"img_map":{},"error":"","gallery_name":gallery_name}
+        response_dict = {"img_map":[],"error":"","gallery_name":gallery_name}
         base_gal = "{0}/images/galleries".format(settings.STATIC_ROOT)
         MAX_DIM = 400.0 # px
         try:
@@ -33,12 +34,16 @@ class GalleryView(TemplateView):
                             ratio = MAX_DIM / s[0]
                         else:
                             ratio = MAX_DIM / s[1]
-                        c_img.resize((int(s[0]*ratio), int(s[1]*ratio)), Image.ANTIALIAS)
+                        new_width = int(s[0]*ratio)
+                        new_height = int(s[1]*ratio)
+                        c_img.thumbnail((new_width, new_height), Image.ANTIALIAS)
                         c_img.save(thumb_path, "JPEG")
-                    except:
+                    except Exception as e:
+                        logging.error("Could not process image for resize: {0}".format(e))
                         continue
-                response_dict["img_map"][img] = thumb_nail
-        except:
+                response_dict["img_map"].append({ "img":img, "thumb":thumb_nail })
+        except Exception as e:
+            logging.error("An unknown error occurred rendering a gallery: {0}".format(e))
             base = '404.html'
             response_dict['error'] = "Gallery does not exist"
             context = RequestContext(request, response_dict)
